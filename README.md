@@ -266,7 +266,7 @@ Every development decision must serve these core principles:
 #### 1. Clone and Setup
 ```bash
 # Clone the repository
-git clone https://github.com/username/cybercrawler-stealth-action.git
+git clone https://github.com/rivie13/cybercrawler-stealth-action.git
 cd cybercrawler-stealth-action
 
 # Set up development branch
