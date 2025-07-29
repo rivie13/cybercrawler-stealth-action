@@ -242,16 +242,31 @@ Every development decision must serve these core principles:
 ## 🧪 Testing Strategy
 
 ### Testing Framework
-- **GDScript Unit Tests**: I use GUT for unit tests and integration tests. Core system functionality is tested with unit tests
-- **Integration Tests**: Cross-system communication
-- **Performance Tests**: 2.5D rendering and AI systems
-- **User Experience Tests**: Terminal interaction flow
+- **GUT 9.4.0**: Godot Unit Test framework for comprehensive testing
+- **Code Coverage**: Line-by-line coverage analysis using [godot-code-coverage](https://github.com/jamie-pate/godot-code-coverage)
+- **Automated CI/CD**: GitHub Actions workflow for continuous testing
+- **Coverage Requirements**: Currently 10% minimum (will increase as codebase matures)
+
+### Current Test Coverage
+The project currently has **88.2% test coverage** with working examples:
+- `sample_script.gd`: Example script demonstrating coverage
+- `test_sample_script.gd`: Comprehensive test suite
+- `test_sample.gd`: Basic GUT test examples
+
+### Running Tests
+```bash
+# Navigate to project directory
+cd cybercrawler_basicstealthaction
+
+# Run tests with coverage
+& "C:\Program Files\Godot\Godot_v4.4.1-stable_win64_console.exe" --headless --script addons/gut/gut_cmdln.gd -gexit
+```
 
 ### Quality Assurance
-- **Code Coverage**: Maintain high test coverage
-- **Performance Monitoring**: Frame rate and memory usage
-- **Cross-Platform Testing**: Ensure compatibility
-- **Integration Validation**: Test with tower defense system
+- **Automated Testing**: Every push triggers full test suite
+- **Code Coverage**: Detailed line-by-line coverage reporting
+- **Quality Gates**: Tests must pass before merge
+- **Documentation**: Comprehensive testing guide in `docs/TESTING.md`
 
 ## 🚀 Getting Started
 
