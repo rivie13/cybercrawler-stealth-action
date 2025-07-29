@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="GutTests" failures="0" tests="13" >
+  <testsuite name="tests/unit/test_sample.gd" tests="5" failures="0" skipped="0" time="0.000922" >
+      <testcase name="test_basic_assertion" assertions="3" status="pass" classname="tests/unit/test_sample.gd" time="0.000193" >
+      </testcase>
+      <testcase name="test_string_operations" assertions="3" status="pass" classname="tests/unit/test_sample.gd" time="0.000149" >
+      </testcase>
+      <testcase name="test_array_operations" assertions="3" status="pass" classname="tests/unit/test_sample.gd" time="0.000129" >
+      </testcase>
+      <testcase name="test_dictionary_operations" assertions="3" status="pass" classname="tests/unit/test_sample.gd" time="0.000128" >
+      </testcase>
+      <testcase name="test_intentional_failure" assertions="0" status="no asserts" classname="tests/unit/test_sample.gd" time="0.000323" >
+      </testcase>
+      </testsuite>
+  <testsuite name="tests/unit/test_sample_script.gd" tests="8" failures="0" skipped="0" time="0.001419" >
+      <testcase name="test_initialization" assertions="2" status="pass" classname="tests/unit/test_sample_script.gd" time="0.000189" >
+      </testcase>
+      <testcase name="test_add_value" assertions="2" status="pass" classname="tests/unit/test_sample_script.gd" time="0.000161" >
+      </testcase>
+      <testcase name="test_multiply_value" assertions="2" status="pass" classname="tests/unit/test_sample_script.gd" time="0.000188" >
+      </testcase>
+      <testcase name="test_name_operations" assertions="1" status="pass" classname="tests/unit/test_sample_script.gd" time="0.00014" >
+      </testcase>
+      <testcase name="test_is_positive" assertions="2" status="pass" classname="tests/unit/test_sample_script.gd" time="0.000177" >
+      </testcase>
+      <testcase name="test_is_negative" assertions="1" status="pass" classname="tests/unit/test_sample_script.gd" time="0.000188" >
+      </testcase>
+      <testcase name="test_reset" assertions="2" status="pass" classname="tests/unit/test_sample_script.gd" time="0.000225" >
+      </testcase>
+      <testcase name="test_conditional_function_true_branch" assertions="1" status="pass" classname="tests/unit/test_sample_script.gd" time="0.000151" >
+      </testcase>
+      </testsuite>
+  </testsuites>
