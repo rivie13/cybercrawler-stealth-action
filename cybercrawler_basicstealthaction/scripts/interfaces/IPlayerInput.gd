@@ -1,10 +1,7 @@
-class_name IPlayerInput
+# Pure behavior contract for input systems
+# Actual input signals handled by Node-based input handlers
+class_name IPlayerInputBehavior
 extends RefCounted
-
-# Input event signals
-signal move_requested(direction: Vector2)
-signal interaction_requested(target: Node)
-signal stealth_action_requested(action_type: String)
 
 # Input query methods
 func is_moving() -> bool:
@@ -14,3 +11,11 @@ func is_moving() -> bool:
 func get_current_input() -> Vector2:
     # Override in implementations
     return Vector2.ZERO
+
+func get_interaction_target() -> Node:
+    # Override in implementations
+    return null
+
+func is_stealth_action_active() -> bool:
+    # Override in implementations
+    return false

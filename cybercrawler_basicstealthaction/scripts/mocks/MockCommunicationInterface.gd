@@ -1,5 +1,5 @@
-class_name MockCommunicationInterface
-extends ICommunicationInterface
+class_name MockCommunicationBehavior
+extends ICommunicationBehavior
 
 # Track interactions for testing
 var terminal_interactions: Array[Dictionary] = []
@@ -34,3 +34,7 @@ func get_last_interaction() -> Dictionary:
     if terminal_interactions.size() > 0:
         return terminal_interactions[-1]
     return {}
+
+func clear_interactions() -> void:
+    terminal_interactions.clear()
+    alerts_triggered.clear()
