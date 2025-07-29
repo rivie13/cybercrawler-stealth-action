@@ -1,0 +1,29 @@
+[gd_scene load_steps=1 format=3]
+
+[node name="Main" type="Node2D"]
+
+[node name="World" type="Node2D" parent="."]
+
+[node name="Background" type="ColorRect" parent="World"]
+offset_right = 1152.0
+offset_bottom = 648.0
+color = Color(0.1, 0.1, 0.15, 1)
+
+[node name="Ground" type="StaticBody2D" parent="World"]
+
+[node name="GroundSprite" type="ColorRect" parent="World/Ground"]
+offset_top = 600.0
+offset_right = 1152.0
+offset_bottom = 648.0
+color = Color(0.3, 0.3, 0.3, 1)
+
+[node name="GroundCollision" type="CollisionShape2D" parent="World/Ground"]
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="DebugInfo" type="Label" parent="UI"]
+offset_right = 300.0
+offset_bottom = 100.0
+text = "CyberCrawler Stealth Action
+Phase 1B: Basic 2.5D World
+DI Architecture Ready"
