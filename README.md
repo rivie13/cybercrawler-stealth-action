@@ -386,7 +386,13 @@ cybercrawler-stealth-action/
 
 ## 📄 License
 
-[License information to be determined - should match parent CyberCrawler repository]
+This project is licensed under the CyberCrawler Source Available License v1.0 - see the [LICENSE](LICENSE) file for details.
+
+**Key Points:**
+- ✅ Free for personal, educational, and research use
+- ✅ Open source code available for learning and contribution
+- ❌ Commercial use requires separate licensing
+- 📧 Commercial licensing inquiries: riviera.t.sperduto13@gmail.com
 
 ---
 
