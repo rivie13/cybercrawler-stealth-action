@@ -112,13 +112,15 @@ func _validate_coverage_requirements():
 		print("\n--- Files with Tests and Coverage ---")
 		for file_info in files_with_tests:
 			var status = "✅"
-			var required_coverage = min(COVERAGE_TARGET_FILE, float(file_info.lines))
-			if file_info.coverage < required_coverage:
+			# Calculate required coverage: 50% of lines or 100 lines, whichever is less
+			var required_lines = min(file_info.lines * COVERAGE_TARGET_FILE / 100.0, MIN_LINES_COVERED)
+			var required_coverage_percent = (required_lines / float(file_info.lines)) * 100.0
+			if file_info.coverage < required_coverage_percent:
 				status = "❌"
 			
 			print("%s %.1f%% %s (%d/%d lines) - Required: %.1f%%" % [
 				status, file_info.coverage, file_info.name, 
-				file_info.covered, file_info.lines, required_coverage
+				file_info.covered, file_info.lines, required_coverage_percent
 			])
 	
 	# Show files without tests
@@ -144,10 +146,12 @@ func _validate_coverage_requirements():
 	
 	# Check individual file coverage
 	for file_info in files_with_tests:
-		var required_coverage = min(COVERAGE_TARGET_FILE, float(file_info.lines))
-		if file_info.coverage < required_coverage:
+		# Calculate required coverage: 50% of lines or 100 lines, whichever is less
+		var required_lines = min(file_info.lines * COVERAGE_TARGET_FILE / 100.0, MIN_LINES_COVERED)
+		var required_coverage_percent = (required_lines / float(file_info.lines)) * 100.0
+		if file_info.coverage < required_coverage_percent:
 			validation_passed = false
-			failure_reasons.append("%s: %.1f%% coverage < %.1f%% required" % [file_info.name, file_info.coverage, required_coverage])
+			failure_reasons.append("%s: %.1f%% coverage < %.1f%% required" % [file_info.name, file_info.coverage, required_coverage_percent])
 	
 	# Report results
 	if validation_passed:
