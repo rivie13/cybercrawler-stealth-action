@@ -10,11 +10,12 @@ var movement_component: PlayerMovementComponent
 var interaction_component: PlayerInteractionComponent
 
 # Visual feedback
-@onready var debug_label: Label = $"../../UI/DebugInfo"
+@onready var debug_label: Label
 @onready var player_sprite: Sprite2D = $BasicPlayer
 @onready var player_details: Node2D = $Visuals/PlayerDetails
 @onready var interaction_indicator: ColorRect = $Visuals/InteractionIndicator
 @onready var shadow: ColorRect = $Visuals/Shadow
+@onready var cyberpunk_ui: Control = $CyberpunkUI
 
 # Isometric movement system
 var isometric_offset: Vector2 = Vector2(8, 4)  # Half tile size for isometric positioning (16x8 tiles)
@@ -27,6 +28,11 @@ func initialize(container: DIContainer) -> void:
 	# Create components
 	movement_component = PlayerMovementComponent.new()
 	interaction_component = PlayerInteractionComponent.new()
+	
+	# Get tilemap reference for interaction component
+	var tilemap = get_parent().get_node_or_null("TileMapLayer")
+	if tilemap and interaction_component:
+		interaction_component.set_tilemap(tilemap)
 	
 	# Validate dependencies
 	if not input_behavior:
@@ -73,12 +79,45 @@ func _handle_interactions() -> void:
 	input_behavior.set_interaction_target(target)
 	
 	# Handle interaction input
-	if Input.is_action_just_pressed("interact") and interaction_component.can_interact():
-		_perform_interaction()
+	if Input.is_action_just_pressed("interact"):
+		print("🔍 DEBUG: Interact button pressed!")
+		if interaction_component.can_interact():
+			print("🔍 DEBUG: Can interact - performing interaction")
+			_perform_interaction()
+		else:
+			print("🔍 DEBUG: Cannot interact - no valid target")
+	elif Input.is_action_just_pressed("ui_accept"):
+		print("🔍 DEBUG: Enter/space pressed - trying as alternative interact")
+		if interaction_component.can_interact():
+			print("🔍 DEBUG: Can interact - performing interaction")
+			_perform_interaction()
+		else:
+			print("🔍 DEBUG: Cannot interact - no valid target")
 
 func _perform_interaction() -> void:
 	var target = interaction_component.get_interaction_target()
+	print("🔍 DEBUG: Attempting interaction with target: ", target)
+	
 	if target and target.has_method("interact_with_player"):
+		# Log successful interaction
+		print("🎯 SUCCESSFUL INTERACTION: Player interacted with terminal '%s'" % target.name)
+		
+		# Show cyberpunk UI
+		print("🔍 DEBUG: cyberpunk_ui exists: ", cyberpunk_ui != null)
+		if cyberpunk_ui:
+			print("🔍 DEBUG: cyberpunk_ui has show_interaction_ui method: ", cyberpunk_ui.has_method("show_interaction_ui"))
+			if cyberpunk_ui.has_method("show_interaction_ui"):
+				var terminal_type = target.terminal_type if target.has_method("get_terminal_type") else "unknown"
+				print("🔍 DEBUG: Calling show_interaction_ui with type: ", terminal_type)
+				cyberpunk_ui.show_interaction_ui(terminal_type)
+			else:
+				print("❌ ERROR: cyberpunk_ui doesn't have show_interaction_ui method")
+		else:
+			print("❌ ERROR: cyberpunk_ui is null")
+		
+		# DISABLED: Show simple interaction message - using cyberpunk UI instead
+		# show_fallback_interaction_ui(target)
+		
 		# Notify external systems through DI
 		if communication_behavior:
 			communication_behavior.handle_terminal_interaction(
@@ -88,6 +127,34 @@ func _perform_interaction() -> void:
 		
 		# Perform actual interaction
 		target.interact_with_player(self)
+		
+		# Update debug label with interaction success
+		if debug_label:
+			var current_text = debug_label.text
+			debug_label.text = current_text + "\n✅ INTERACTION SUCCESS!"
+			
+			# Clear the success message after 2 seconds
+			await get_tree().create_timer(2.0).timeout
+			if debug_label:
+				debug_label.text = current_text
+	else:
+		print("❌ ERROR: No valid interaction target found")
+
+func show_fallback_interaction_ui(target: Node) -> void:
+	# Create a simple popup message as fallback
+	var popup = AcceptDialog.new()
+	popup.title = "TERMINAL ACCESS"
+	popup.dialog_text = "JACKING INTO " + (target.terminal_type if target.has_method("get_terminal_type") else "UNKNOWN") + "...\n\nACCESS GRANTED"
+	popup.add_theme_color_override("font_color", Color(0, 255, 255))  # Cyan
+	popup.add_theme_font_size_override("font_size", 16)
+	
+	# Add to scene
+	get_tree().current_scene.add_child(popup)
+	popup.popup_centered()
+	
+	# Auto-close after 3 seconds
+	await get_tree().create_timer(3.0).timeout
+	popup.queue_free()
 
 func _update_isometric_effects() -> void:
 	# Isometric: Update visual effects based on position
@@ -123,11 +190,28 @@ func _update_visual_effects() -> void:
 	if interaction_component and interaction_component.can_interact():
 		if interaction_indicator:
 			interaction_indicator.visible = true
+			# Pulse the indicator
+			var time_dict = Time.get_time_dict_from_system()
+			var seconds = time_dict.get("second", 0)  # Use "second" key from time dict
+			var alpha = 0.3 + 0.7 * sin(seconds * 3.0)  # Pulse every 3 seconds
+			interaction_indicator.modulate = Color(1, 1, 0, alpha)
 	else:
 		if interaction_indicator:
 			interaction_indicator.visible = false
 
 func _update_debug_info() -> void:
+	# Try to find debug label if not found
+	if not debug_label:
+		debug_label = get_node_or_null("../UI/DebugInfo")
+		if not debug_label:
+			debug_label = get_node_or_null("../../UI/DebugInfo")
+		if not debug_label:
+			debug_label = get_node_or_null("../../../UI/DebugInfo")
+		if not debug_label:
+			debug_label = get_node_or_null("/root/Main/UI/DebugInfo")
+		if not debug_label:
+			return  # Skip if no debug label found
+	
 	if debug_label:
 		var debug_text = "Player Status:\n"
 		debug_text += "Position: %.1f, %.1f\n" % [global_position.x, global_position.y]
@@ -135,9 +219,21 @@ func _update_debug_info() -> void:
 		debug_text += "Stealth: %s\n" % input_behavior.is_stealth_action_active()
 		
 		var target = interaction_component.get_interaction_target()
-		debug_text += "Can Interact: %s" % (target != null)
+		debug_text += "Can Interact: %s\n" % (target != null)
+		
+		if target:
+			debug_text += "Target: %s\n" % target.name
+			if target.has_method("get_terminal_type"):
+				debug_text += "Type: %s" % target.get_terminal_type()
 		
 		debug_label.text = debug_text
+	else:
+		# Fallback: print to console
+		print("Player Status - Position: %.1f, %.1f, Moving: %s, Stealth: %s" % [
+			global_position.x, global_position.y, 
+			input_behavior.is_moving(), 
+			input_behavior.is_stealth_action_active()
+		])
 
 # Public API for external systems
 func get_player_position() -> Vector2:

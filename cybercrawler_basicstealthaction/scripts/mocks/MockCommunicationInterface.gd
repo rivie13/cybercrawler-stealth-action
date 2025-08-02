@@ -6,17 +6,17 @@ var terminal_interactions: Array[Dictionary] = []
 var alerts_triggered: Array[Dictionary] = []
 var mission_context: Dictionary = {}
 
-func handle_terminal_interaction(terminal_type: String, context: Dictionary) -> void:
+func handle_terminal_interaction(_terminal_type: String, _context: Dictionary) -> void:
     terminal_interactions.append({
-        "type": terminal_type,
-        "context": context,
+        "type": _terminal_type,
+        "context": _context,
         "timestamp": Time.get_time_dict_from_system()
     })
 
-func notify_alert_state(alert_level: int, context: Dictionary) -> void:
+func notify_alert_state(_alert_level: int, _context: Dictionary) -> void:
     alerts_triggered.append({
-        "level": alert_level,
-        "context": context,
+        "level": _alert_level,
+        "context": _context,
         "timestamp": Time.get_time_dict_from_system()
     })
 

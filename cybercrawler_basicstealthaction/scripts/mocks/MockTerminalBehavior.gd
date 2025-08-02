@@ -7,7 +7,7 @@ var _can_interact: bool = true
 var _interaction_data: Dictionary = {}
 var _interaction_results: Array[Dictionary] = []
 
-func can_interact(player: Node) -> bool:
+func can_interact(_player: Node) -> bool:
     return _can_interact and _is_accessible
 
 func get_terminal_type() -> String:
@@ -16,7 +16,7 @@ func get_terminal_type() -> String:
 func get_interaction_data() -> Dictionary:
     return _interaction_data
 
-func process_interaction(player: Node) -> Dictionary:
+func process_interaction(_player: Node) -> Dictionary:
     var result = {
         "success": _can_interact,
         "message": "Mock interaction processed",
