@@ -16,6 +16,11 @@ func _ready():
 		spawn_terminals()
 
 func spawn_terminals():
+	# Check if tilemap is available
+	if not tilemap:
+		print("❌ TerminalSpawner: Tilemap not set, cannot spawn terminals")
+		return
+	
 	# Get all used cells from tilemap
 	var used_cells = tilemap.get_used_cells()
 	
