@@ -4,7 +4,7 @@ class_name ITerminalBehavior
 extends RefCounted
 
 # Terminal interaction methods
-func can_interact(player: Node) -> bool:
+func can_interact(_player: Node) -> bool:
     # Override in implementations
     return false
 
@@ -16,7 +16,7 @@ func get_interaction_data() -> Dictionary:
     # Override in implementations
     return {}
 
-func process_interaction(player: Node) -> Dictionary:
+func process_interaction(_player: Node) -> Dictionary:
     # Override in implementations - returns result data
     return {"success": false, "message": "Not implemented"}
 

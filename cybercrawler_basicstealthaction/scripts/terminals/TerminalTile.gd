@@ -26,7 +26,7 @@ func interact_with_player(player: Node) -> void:
 func get_terminal_type() -> String:
 	return terminal_type
 
-func can_interact() -> bool:
+func is_interactable() -> bool:
 	return true
 
 func set_terminal_behavior(behavior: ITerminalBehavior) -> void:

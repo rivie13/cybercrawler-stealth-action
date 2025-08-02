@@ -19,6 +19,32 @@ func _ready():
 	# Setup terminal spawner
 	setup_terminal_spawner()
 
+func _exit_tree():
+	# Clean up when the scene is being removed
+	print("🧹 Cleaning up Main scene...")
+	cleanup()
+
+func _notification(what):
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		# Handle window close request
+		print("🔄 Window close requested - cleaning up...")
+		cleanup()
+		get_tree().quit()
+
+func cleanup():
+	# Clean up DI container
+	if di_container:
+		di_container.clear_bindings()
+		di_container = null
+	
+	# Clean up any running tweens or timers
+	var tweens = get_tree().get_root().get_children()
+	for tween in tweens:
+		if tween is Tween and is_instance_valid(tween):
+			tween.kill()
+	
+	print("✅ Cleanup complete")
+
 func test_tile_identification():
 	print("\n🧪 Testing Tile Identification System...")
 	

@@ -49,7 +49,7 @@ func spawn_terminals():
 			terminal_body.global_position = tilemap.map_to_local(cell_pos)
 			
 			# Add terminal behavior script
-			var terminal_script = load("res://scripts/TerminalTile.gd")
+			var terminal_script = load("res://scripts/terminals/TerminalTile.gd")
 			terminal_body.set_script(terminal_script)
 			terminal_body.terminal_type = terminal_type
 			terminal_body.terminal_name = terminal_body.name

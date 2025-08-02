@@ -20,6 +20,11 @@ var interaction_component: PlayerInteractionComponent
 # Isometric movement system
 var isometric_offset: Vector2 = Vector2(8, 4)  # Half tile size for isometric positioning (16x8 tiles)
 
+# Interaction optimization
+var last_player_position: Vector2 = Vector2.ZERO
+var interaction_search_cooldown: float = 0.1  # Only search every 0.1 seconds
+var last_interaction_search_time: float = 0.0
+
 func initialize(container: DIContainer) -> void:
 	# Dependency injection
 	input_behavior = container.get_implementation("IPlayerInputBehavior")
@@ -43,6 +48,8 @@ func initialize(container: DIContainer) -> void:
 func _ready() -> void:
 	# Add to player group for identification
 	add_to_group("players")
+	# Initialize last position
+	last_player_position = global_position
 
 func _physics_process(delta: float) -> void:
 	if not input_behavior:
@@ -55,8 +62,8 @@ func _physics_process(delta: float) -> void:
 	# Handle movement
 	_handle_movement(delta)
 	
-	# Handle interactions
-	_handle_interactions()
+	# Handle interactions (optimized to prevent infinite loops)
+	_handle_interactions(delta)
 	
 	# Update isometric effects
 	_update_isometric_effects()
@@ -67,16 +74,31 @@ func _physics_process(delta: float) -> void:
 	# Update debug info
 	_update_debug_info()
 
-func _handle_movement(_delta: float) -> void:
+func _handle_movement(delta: float) -> void:
 	var input_direction = input_behavior.get_current_input()
-	# Use 2D movement for isometric world
-	velocity = input_direction * movement_component.speed
+	# Use the movement component to calculate velocity with smooth acceleration
+	velocity = movement_component.update_movement(delta, input_direction)
 	move_and_slide()
 
-func _handle_interactions() -> void:
-	# Find nearby terminals using 2D position
-	var target = interaction_component.find_interaction_target(global_position)
-	input_behavior.set_interaction_target(target)
+func _handle_interactions(_delta: float) -> void:
+	# Only search for terminals if player moved or if we don't have a current target
+	var should_search = false
+	
+	# Check if player moved significantly
+	if global_position.distance_to(last_player_position) > 1.0:
+		should_search = true
+		last_player_position = global_position
+	
+	# Check if we need to search due to time or missing target
+	if not interaction_component.can_interact():
+		should_search = true
+	
+	# Add cooldown to prevent excessive searching
+	if should_search and Time.get_time_dict_from_system().get("second", 0) - last_interaction_search_time > interaction_search_cooldown:
+		# Find nearby terminals using 2D position
+		var target = interaction_component.find_interaction_target(global_position)
+		input_behavior.set_interaction_target(target)
+		last_interaction_search_time = Time.get_time_dict_from_system().get("second", 0)
 	
 	# Handle interaction input
 	if Input.is_action_just_pressed("interact"):
@@ -134,8 +156,9 @@ func _perform_interaction() -> void:
 			debug_label.text = current_text + "\n✅ INTERACTION SUCCESS!"
 			
 			# Clear the success message after 2 seconds
-			await get_tree().create_timer(2.0).timeout
-			if debug_label:
+			var timer = get_tree().create_timer(2.0)
+			await timer.timeout
+			if debug_label and is_instance_valid(debug_label):
 				debug_label.text = current_text
 	else:
 		print("❌ ERROR: No valid interaction target found")
@@ -153,8 +176,10 @@ func show_fallback_interaction_ui(target: Node) -> void:
 	popup.popup_centered()
 	
 	# Auto-close after 3 seconds
-	await get_tree().create_timer(3.0).timeout
-	popup.queue_free()
+	var timer = get_tree().create_timer(3.0)
+	await timer.timeout
+	if is_instance_valid(popup):
+		popup.queue_free()
 
 func _update_isometric_effects() -> void:
 	# Isometric: Update visual effects based on position

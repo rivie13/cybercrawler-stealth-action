@@ -12,12 +12,43 @@ var ui_visible: bool = false
 var alpha: float = 0.0
 var target_alpha: float = 0.0
 
+# Tween management
+var current_tween: Tween = null
+var glitch_tween: Tween = null
+var color_tween: Tween = null
+var reset_tween: Tween = null
+
 func _ready():
 	setup_ui()
 	setup_timers()
 	hide_ui()
 	# Make sure we're on top of other UI elements
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+func _exit_tree():
+	# Clean up all tweens and timers when the node is being removed
+	cleanup_tweens()
+	if glitch_timer and is_instance_valid(glitch_timer):
+		glitch_timer.stop()
+		glitch_timer.queue_free()
+
+func cleanup_tweens():
+	# Stop and free all active tweens
+	if current_tween and is_instance_valid(current_tween):
+		current_tween.kill()
+		current_tween = null
+	
+	if glitch_tween and is_instance_valid(glitch_tween):
+		glitch_tween.kill()
+		glitch_tween = null
+	
+	if color_tween and is_instance_valid(color_tween):
+		color_tween.kill()
+		color_tween = null
+	
+	if reset_tween and is_instance_valid(reset_tween):
+		reset_tween.kill()
+		reset_tween = null
 
 func setup_ui():
 	# Create main container - position it properly on screen
@@ -133,21 +164,22 @@ func show_interaction_ui(terminal_type: String):
 	show()
 	
 	# Animate progress bar
-	var tween = create_tween()
-	tween.tween_property(progress_bar, "value", 100, 2.0)
-	tween.tween_callback(_on_hacking_complete)
+	current_tween = create_tween()
+	current_tween.tween_property(progress_bar, "value", 100, 2.0)
+	current_tween.tween_callback(_on_hacking_complete)
 
 func hide_ui():
 	ui_visible = false
 	target_alpha = 0.0
 	glitch_timer.stop()
 	
-	var tween = create_tween()
-	tween.tween_property(self, "modulate:a", 0.0, 0.3)
-	tween.tween_callback(hide)
+	cleanup_tweens()
+	current_tween = create_tween()
+	current_tween.tween_property(self, "modulate:a", 0.0, 0.3)
+	current_tween.tween_callback(hide)
 
 func _on_glitch_timer_timeout():
-	if ui_visible:
+	if ui_visible and is_instance_valid(self):
 		# Add cyberpunk glitch effect
 		var glitch_offset = Vector2(randf_range(-3, 3), randf_range(-3, 3))
 		interaction_label.position += glitch_offset
@@ -159,15 +191,20 @@ func _on_glitch_timer_timeout():
 		status_label.add_theme_color_override("font_color", glitch_color)
 		
 		# Reset position and color after a short delay
-		await get_tree().create_timer(0.03).timeout
-		interaction_label.position -= glitch_offset
-		status_label.position -= glitch_offset
-		
-		# Reset colors
-		interaction_label.add_theme_color_override("font_color", Color(0, 255, 255))
-		status_label.add_theme_color_override("font_color", Color(255, 255, 0))
+		var timer = get_tree().create_timer(0.03)
+		await timer.timeout
+		if is_instance_valid(self) and is_instance_valid(interaction_label) and is_instance_valid(status_label):
+			interaction_label.position -= glitch_offset
+			status_label.position -= glitch_offset
+			
+			# Reset colors
+			interaction_label.add_theme_color_override("font_color", Color(0, 255, 255))
+			status_label.add_theme_color_override("font_color", Color(255, 255, 0))
 
 func _on_hacking_complete():
+	if not is_instance_valid(self):
+		return
+		
 	status_label.text = "ACCESS GRANTED"
 	status_label.add_theme_color_override("font_color", Color(0, 255, 0))  # Green
 	
@@ -175,13 +212,15 @@ func _on_hacking_complete():
 	start_cyberpunk_glitch_animation()
 	
 	# Hide after showing completion
-	await get_tree().create_timer(2.0).timeout
-	hide_ui()
+	var timer = get_tree().create_timer(2.0)
+	await timer.timeout
+	if is_instance_valid(self):
+		hide_ui()
 
 func start_cyberpunk_glitch_animation():
 	# Create a camera zoom effect that looks like glitching into cyberspace
 	var camera = get_viewport().get_camera_2d()
-	if camera:
+	if camera and is_instance_valid(camera):
 		# Store original camera properties
 		var original_zoom = camera.zoom
 		var original_position = camera.global_position
@@ -192,7 +231,7 @@ func start_cyberpunk_glitch_animation():
 		var target_position = terminal.global_position if terminal else (player.global_position if player else original_position)
 		
 		# Create intense glitch effect
-		var glitch_tween = create_tween()
+		glitch_tween = create_tween()
 		glitch_tween.set_parallel(true)
 		
 		# Zoom INTO the terminal (LARGER zoom values = zoom in)
@@ -220,15 +259,17 @@ func start_cyberpunk_glitch_animation():
 		get_tree().current_scene.add_child(color_rect)
 		
 		# Animate the color overlay
-		var color_tween = create_tween()
+		color_tween = create_tween()
 		color_tween.tween_property(color_rect, "modulate:a", 0.0, 0.8)
 		color_tween.tween_callback(color_rect.queue_free)
 		
 		# Reset camera after animation
-		await get_tree().create_timer(1.0).timeout
-		var reset_tween = create_tween()
-		reset_tween.tween_property(camera, "zoom", original_zoom, 0.5)
-		reset_tween.tween_property(camera, "global_position", original_position, 0.5)
+		var timer = get_tree().create_timer(1.0)
+		await timer.timeout
+		if is_instance_valid(camera) and is_instance_valid(self):
+			reset_tween = create_tween()
+			reset_tween.tween_property(camera, "zoom", original_zoom, 0.5)
+			reset_tween.tween_property(camera, "global_position", original_position, 0.5)
 
 func _process(delta):
 	# Smooth alpha transition

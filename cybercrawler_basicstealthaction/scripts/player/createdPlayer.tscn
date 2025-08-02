@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://jhmv8n34cfvb" path="res://BasicPlayer.png" id="1_grnqn"]
 [ext_resource type="Script" uid="uid://ka8knok4vqh1" path="res://scripts/player/created_player.gd" id="1_qrkmh"]
-[ext_resource type="Script" path="res://scripts/player/CyberpunkInteractionUI.gd" id="2_cyberpunk"]
+[ext_resource type="Script" path="res://scripts/player/ui/CyberpunkInteractionUI.gd" id="2_cyberpunk"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_f72ek"]
 radius = 2.0

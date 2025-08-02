@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=4 uid="uid://d06d60abkyce3"]
 
 [ext_resource type="PackedScene" uid="uid://bqxv8yqxqxqxq" path="res://scenes/IsometricWorld.tscn" id="1"]
-[ext_resource type="Script" uid="uid://bhp7p4rqk1io1" path="res://scripts/Main.gd" id="1_main"]
+[ext_resource type="Script" uid="uid://b746otvflthim" path="res://scripts/core/Main.gd" id="1_main"]
 [ext_resource type="Texture2D" uid="uid://cmrfuofm46tfb" path="res://cybercrawler_tileset.png" id="2_rvslj"]
 [ext_resource type="PackedScene" uid="uid://cpe8cwtb6m38n" path="res://scripts/player/createdPlayer.tscn" id="3_0bbpv"]
 [ext_resource type="Script" uid="uid://ba7nl18bsl6kl" path="res://scenes/tile_map_layer.gd" id="3_rarhs"]

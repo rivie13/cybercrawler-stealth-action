@@ -4,11 +4,11 @@ class_name ICommunicationBehavior
 extends RefCounted
 
 # Methods external systems implement
-func handle_terminal_interaction(terminal_type: String, context: Dictionary) -> void:
+func handle_terminal_interaction(_terminal_type: String, _context: Dictionary) -> void:
     # Override in implementations
     pass
 
-func notify_alert_state(alert_level: int, context: Dictionary) -> void:
+func notify_alert_state(_alert_level: int, _context: Dictionary) -> void:
     # Override in implementations  
     pass
 
