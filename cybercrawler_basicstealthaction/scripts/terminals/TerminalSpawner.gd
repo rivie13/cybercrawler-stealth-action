@@ -55,9 +55,10 @@ func spawn_terminals():
 			terminal_body.terminal_name = terminal_body.name
 			
 			# Set up DI behavior
-			var terminal_behavior = di_container.get_implementation("ITerminalBehavior")
-			if terminal_behavior:
-				terminal_body.set_terminal_behavior(terminal_behavior)
+			if di_container:
+				var terminal_behavior = di_container.get_implementation("ITerminalBehavior")
+				if terminal_behavior:
+					terminal_body.set_terminal_behavior(terminal_behavior)
 			
 			# Add to tilemap as child
 			tilemap.add_child(terminal_body)

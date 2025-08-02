@@ -5,6 +5,7 @@ var mock_cells: Dictionary = {}
 var mock_used_cells: Array = []
 var mock_source_ids: Dictionary = {}
 
+# Mock methods that match the interface expected by TerminalSpawner
 func get_used_cells() -> Array:
 	return mock_used_cells
 
