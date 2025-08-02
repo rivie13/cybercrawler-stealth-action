@@ -316,4 +316,121 @@ Once the interface foundation is solid:
 3. **Keep it simple** - start with minimal functionality
 4. **One responsibility per class** - no monolithic components
 
+## 🎮 **Input Configuration Guide**
+
+### **Current Input Map Setup**
+
+The project uses Godot's Input Map system for all player controls. The current configuration includes:
+
+#### **Movement Actions:**
+- `move_left`: A key, Left Arrow
+- `move_right`: D key, Right Arrow  
+- `move_up`: W key, Up Arrow
+- `move_down`: S key, Down Arrow
+
+#### **Interaction Actions:**
+- `interact`: E key, Space
+- `stealth`: Shift (Physical left)
+
+### **How to Modify Input Actions**
+
+#### **Adding New Input Actions:**
+
+1. **Open Project Settings** (Ctrl+Shift+O)
+2. **Select "Input Map" tab**
+3. **Add New Action:**
+   - Type the action name in the "Add New Action" field
+   - Click the "+ Add" button
+   - Add the desired key/event to the action
+   - Set deadzone if needed (default: 0.2)
+
+#### **Modifying Existing Actions:**
+
+1. **In the Input Map tab:**
+   - Click the **pencil icon** next to an action to edit its events
+   - Click the **plus icon** to add additional keys to the same action
+   - Click the **trash can icon** to remove an action entirely
+
+#### **Adding Multiple Keys to One Action:**
+
+For example, to add arrow keys to movement:
+1. Click the **plus icon** next to `move_left`
+2. Add "Left Arrow" as an additional event
+3. Now both A and Left Arrow will trigger `move_left`
+
+### **Code Integration**
+
+The `KeyboardPlayerInput.gd` class automatically uses these action names:
+
+```gdscript
+# Input action names (defined in Input Map)
+const INPUT_MOVE_LEFT = "move_left"
+const INPUT_MOVE_RIGHT = "move_right" 
+const INPUT_MOVE_UP = "move_up"
+const INPUT_MOVE_DOWN = "move_down"
+const INPUT_INTERACT = "interact"
+const INPUT_STEALTH = "stealth"
+```
+
+### **Adding New Input Actions to Code:**
+
+1. **Add the constant** to `KeyboardPlayerInput.gd`:
+   ```gdscript
+   const INPUT_NEW_ACTION = "new_action"
+   ```
+
+2. **Use the action** in the `update_input()` method:
+   ```gdscript
+   if Input.is_action_pressed(INPUT_NEW_ACTION):
+       # Handle the new action
+   ```
+
+3. **Add to interface** if needed:
+   - Update `IPlayerInputBehavior` interface
+   - Update mock implementations
+   - Update tests
+
+### **Recommended Input Actions for Future Features:**
+
+#### **Phase 1C (Terminal System):**
+- `terminal_menu_up`: Up Arrow (in menu)
+- `terminal_menu_down`: Down Arrow (in menu)
+- `terminal_menu_select`: Enter, Space
+- `terminal_menu_cancel`: Escape
+
+#### **Phase 2 (Stealth Mechanics):**
+- `crouch`: Ctrl
+- `sprint`: Shift (when not in stealth)
+- `inventory`: I
+- `map`: M
+
+#### **Phase 3 (Advanced Features):**
+- `quick_save`: F5
+- `quick_load`: F9
+- `screenshot`: F12
+- `debug_mode`: F1
+
+### **Input Map Best Practices:**
+
+1. **Use descriptive names** - `move_left` not `left`
+2. **Group related actions** - all movement actions start with `move_`
+3. **Set appropriate deadzones** - 0.2 for analog inputs, 0.0 for digital
+4. **Test multiple input devices** - keyboard, gamepad, etc.
+5. **Document changes** - update this guide when adding new actions
+
+### **Troubleshooting Input Issues:**
+
+1. **Action not responding:**
+   - Check Input Map has the correct action name
+   - Verify the key is properly assigned
+   - Check for typos in the constant names
+
+2. **Multiple actions triggering:**
+   - Ensure action names are unique
+   - Check for overlapping key assignments
+
+3. **Input lag or responsiveness:**
+   - Adjust deadzone values
+   - Check for conflicting input handling
+
 **Ready to start building the interface foundation?** 🎯

@@ -1,0 +1,39 @@
+[gd_scene load_steps=4 format=3 uid="uid://cpe8cwtb6m38n"]
+
+[ext_resource type="Texture2D" uid="uid://jhmv8n34cfvb" path="res://BasicPlayer.png" id="1_grnqn"]
+[ext_resource type="Script" uid="uid://ka8knok4vqh1" path="res://scripts/player/created_player.gd" id="1_qrkmh"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_f72ek"]
+radius = 2.0
+
+[node name="CreatedPlayer" type="CharacterBody2D"]
+motion_mode = 1
+script = ExtResource("1_qrkmh")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_f72ek")
+
+[node name="BasicPlayer" type="Sprite2D" parent="."]
+z_index = 2
+texture_filter = 1
+position = Vector2(0, -6)
+texture = ExtResource("1_grnqn")
+
+[node name="Visuals" type="Node2D" parent="."]
+
+[node name="PlayerDetails" type="Node2D" parent="Visuals"]
+
+[node name="InteractionIndicator" type="ColorRect" parent="Visuals"]
+visible = false
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = -16.0
+color = Color(1, 1, 0, 0.8)
+
+[node name="Shadow" type="ColorRect" parent="Visuals"]
+offset_left = -16.0
+offset_top = 8.0
+offset_right = 16.0
+offset_bottom = 12.0
+color = Color(0, 0, 0, 0.3)

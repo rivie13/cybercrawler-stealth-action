@@ -1,33 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="GutTests" failures="0" tests="13" >
-  <testsuite name="tests/unit/test_sample.gd" tests="5" failures="0" skipped="0" time="0.000922" >
-      <testcase name="test_basic_assertion" assertions="3" status="pass" classname="tests/unit/test_sample.gd" time="0.000193" >
+<testsuites name="GutTests" failures="0" tests="32" >
+  <testsuite name="tests/unit/test_interfaces.gd" tests="5" failures="0" skipped="0" time="0.001429" >
+      <testcase name="test_communication_behavior_contract" assertions="3" status="pass" classname="tests/unit/test_interfaces.gd" time="0.000185" >
       </testcase>
-      <testcase name="test_string_operations" assertions="3" status="pass" classname="tests/unit/test_sample.gd" time="0.000149" >
+      <testcase name="test_mock_communication_behavior" assertions="3" status="pass" classname="tests/unit/test_interfaces.gd" time="0.000556" >
       </testcase>
-      <testcase name="test_array_operations" assertions="3" status="pass" classname="tests/unit/test_sample.gd" time="0.000129" >
+      <testcase name="test_player_input_behavior" assertions="4" status="pass" classname="tests/unit/test_interfaces.gd" time="0.000197" >
       </testcase>
-      <testcase name="test_dictionary_operations" assertions="3" status="pass" classname="tests/unit/test_sample.gd" time="0.000128" >
+      <testcase name="test_terminal_behavior" assertions="4" status="pass" classname="tests/unit/test_interfaces.gd" time="0.000223" >
       </testcase>
-      <testcase name="test_intentional_failure" assertions="0" status="no asserts" classname="tests/unit/test_sample.gd" time="0.000323" >
+      <testcase name="test_di_container" assertions="3" status="pass" classname="tests/unit/test_interfaces.gd" time="0.000268" >
       </testcase>
       </testsuite>
-  <testsuite name="tests/unit/test_sample_script.gd" tests="8" failures="0" skipped="0" time="0.001419" >
-      <testcase name="test_initialization" assertions="2" status="pass" classname="tests/unit/test_sample_script.gd" time="0.000189" >
+  <testsuite name="tests/unit/test_player_components.gd" tests="7" failures="0" skipped="0" time="0.001223" >
+      <testcase name="test_movement_component_initialization" assertions="4" status="pass" classname="tests/unit/test_player_components.gd" time="0.000167" >
       </testcase>
-      <testcase name="test_add_value" assertions="2" status="pass" classname="tests/unit/test_sample_script.gd" time="0.000161" >
+      <testcase name="test_movement_component_direction_updates" assertions="3" status="pass" classname="tests/unit/test_player_components.gd" time="0.000184" >
       </testcase>
-      <testcase name="test_multiply_value" assertions="2" status="pass" classname="tests/unit/test_sample_script.gd" time="0.000188" >
+      <testcase name="test_movement_component_diagonal_movement" assertions="2" status="pass" classname="tests/unit/test_player_components.gd" time="0.000214" >
       </testcase>
-      <testcase name="test_name_operations" assertions="1" status="pass" classname="tests/unit/test_sample_script.gd" time="0.00014" >
+      <testcase name="test_interaction_component_initialization" assertions="3" status="pass" classname="tests/unit/test_player_components.gd" time="0.00017" >
       </testcase>
-      <testcase name="test_is_positive" assertions="2" status="pass" classname="tests/unit/test_sample_script.gd" time="0.000177" >
+      <testcase name="test_interaction_component_no_targets" assertions="2" status="pass" classname="tests/unit/test_player_components.gd" time="0.000181" >
       </testcase>
-      <testcase name="test_is_negative" assertions="1" status="pass" classname="tests/unit/test_sample_script.gd" time="0.000188" >
+      <testcase name="test_keyboard_input_initialization" assertions="4" status="pass" classname="tests/unit/test_player_components.gd" time="0.000156" >
       </testcase>
-      <testcase name="test_reset" assertions="2" status="pass" classname="tests/unit/test_sample_script.gd" time="0.000225" >
+      <testcase name="test_keyboard_input_constants" assertions="6" status="pass" classname="tests/unit/test_player_components.gd" time="0.000151" >
       </testcase>
-      <testcase name="test_conditional_function_true_branch" assertions="1" status="pass" classname="tests/unit/test_sample_script.gd" time="0.000151" >
+      </testsuite>
+  <testsuite name="tests/unit/test_player_movement.gd" tests="5" failures="0" skipped="0" time="0.0057" >
+      <testcase name="test_player_movement_right" assertions="2" status="pass" classname="tests/unit/test_player_movement.gd" time="0.000758" >
+      </testcase>
+      <testcase name="test_player_stops_when_no_input" assertions="1" status="pass" classname="tests/unit/test_player_movement.gd" time="0.003628" >
+      </testcase>
+      <testcase name="test_stealth_mode_toggle" assertions="2" status="pass" classname="tests/unit/test_player_movement.gd" time="0.000389" >
+      </testcase>
+      <testcase name="test_movement_component" assertions="3" status="pass" classname="tests/unit/test_player_movement.gd" time="0.000444" >
+      </testcase>
+      <testcase name="test_interaction_component" assertions="2" status="pass" classname="tests/unit/test_player_movement.gd" time="0.000481" >
+      </testcase>
+      </testsuite>
+  <testsuite name="tests/unit/test_sample.gd" tests="5" failures="0" skipped="0" time="0.000979" >
+      <testcase name="test_basic_assertion" assertions="3" status="pass" classname="tests/unit/test_sample.gd" time="0.000201" >
+      </testcase>
+      <testcase name="test_string_operations" assertions="3" status="pass" classname="tests/unit/test_sample.gd" time="0.000172" >
+      </testcase>
+      <testcase name="test_array_operations" assertions="3" status="pass" classname="tests/unit/test_sample.gd" time="0.000176" >
+      </testcase>
+      <testcase name="test_dictionary_operations" assertions="3" status="pass" classname="tests/unit/test_sample.gd" time="0.000141" >
+      </testcase>
+      <testcase name="test_intentional_failure" assertions="0" status="no asserts" classname="tests/unit/test_sample.gd" time="0.000289" >
+      </testcase>
+      </testsuite>
+  <testsuite name="tests/unit/test_sample_script.gd" tests="8" failures="0" skipped="0" time="0.001553" >
+      <testcase name="test_initialization" assertions="2" status="pass" classname="tests/unit/test_sample_script.gd" time="0.000167" >
+      </testcase>
+      <testcase name="test_add_value" assertions="2" status="pass" classname="tests/unit/test_sample_script.gd" time="0.000205" >
+      </testcase>
+      <testcase name="test_multiply_value" assertions="2" status="pass" classname="tests/unit/test_sample_script.gd" time="0.000428" >
+      </testcase>
+      <testcase name="test_name_operations" assertions="1" status="pass" classname="tests/unit/test_sample_script.gd" time="0.000201" >
+      </testcase>
+      <testcase name="test_is_positive" assertions="2" status="pass" classname="tests/unit/test_sample_script.gd" time="0.000137" >
+      </testcase>
+      <testcase name="test_is_negative" assertions="1" status="pass" classname="tests/unit/test_sample_script.gd" time="0.00008" >
+      </testcase>
+      <testcase name="test_reset" assertions="2" status="pass" classname="tests/unit/test_sample_script.gd" time="0.000213" >
+      </testcase>
+      <testcase name="test_conditional_function_true_branch" assertions="1" status="pass" classname="tests/unit/test_sample_script.gd" time="0.000122" >
+      </testcase>
+      </testsuite>
+  <testsuite name="tests/integration/test_interface_integration.gd" tests="2" failures="0" skipped="0" time="0.00066" >
+      <testcase name="test_dependency_injection_flow" assertions="6" status="pass" classname="tests/integration/test_interface_integration.gd" time="0.000332" >
+      </testcase>
+      <testcase name="test_complete_interaction_flow" assertions="6" status="pass" classname="tests/integration/test_interface_integration.gd" time="0.000328" >
       </testcase>
       </testsuite>
   </testsuites>
