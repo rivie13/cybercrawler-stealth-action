@@ -50,6 +50,13 @@ func _ready() -> void:
 	add_to_group("players")
 	# Initialize last position
 	last_player_position = global_position
+	
+	# Debug: Check if cyberpunk_ui is properly initialized
+	print("🔍 DEBUG: _ready() called")
+	print("🔍 DEBUG: cyberpunk_ui exists: ", cyberpunk_ui != null)
+	print("🔍 DEBUG: cyberpunk_ui reference: ", cyberpunk_ui)
+	print("🔍 DEBUG: get_node_or_null('CyberpunkUI'): ", get_node_or_null("CyberpunkUI"))
+	print("🔍 DEBUG: All children: ", get_children())
 
 func _physics_process(delta: float) -> void:
 	if not input_behavior:
@@ -75,48 +82,57 @@ func _physics_process(delta: float) -> void:
 	_update_debug_info()
 
 func _handle_movement(delta: float) -> void:
+	if not input_behavior:
+		return
+		
 	var input_direction = input_behavior.get_current_input()
 	# Use the movement component to calculate velocity with smooth acceleration
-	velocity = movement_component.update_movement(delta, input_direction)
+	if movement_component:
+		velocity = movement_component.update_movement(delta, input_direction)
+	else:
+		# Fallback when movement component is not available
+		velocity = input_direction * 100.0  # Basic movement without acceleration
 	move_and_slide()
 
 func _handle_interactions(_delta: float) -> void:
-	# Only search for terminals if player moved or if we don't have a current target
+	# Only do terminal searching if we have the required components
+	if not input_behavior or not interaction_component:
+		return
+		
+	# Check if player moved significantly - ALWAYS search when player moves
 	var should_search = false
-	
-	# Check if player moved significantly
 	if global_position.distance_to(last_player_position) > 1.0:
 		should_search = true
 		last_player_position = global_position
 	
-	# Check if we need to search due to time or missing target
-	if not interaction_component.can_interact():
-		should_search = true
-	
-	# Add cooldown to prevent excessive searching
-	if should_search and Time.get_time_dict_from_system().get("second", 0) - last_interaction_search_time > interaction_search_cooldown:
+	# Search for terminals when player moves or if we don't have a valid target
+	if should_search or not interaction_component.can_interact():
 		# Find nearby terminals using 2D position
 		var target = interaction_component.find_interaction_target(global_position)
 		input_behavior.set_interaction_target(target)
 		last_interaction_search_time = Time.get_time_dict_from_system().get("second", 0)
 	
-	# Handle interaction input
+	# Handle interaction input AFTER updating target
 	if Input.is_action_just_pressed("interact"):
 		print("🔍 DEBUG: Interact button pressed!")
-		if interaction_component.can_interact():
+		if interaction_component and interaction_component.can_interact():
 			print("🔍 DEBUG: Can interact - performing interaction")
 			_perform_interaction()
 		else:
 			print("🔍 DEBUG: Cannot interact - no valid target")
 	elif Input.is_action_just_pressed("ui_accept"):
 		print("🔍 DEBUG: Enter/space pressed - trying as alternative interact")
-		if interaction_component.can_interact():
+		if interaction_component and interaction_component.can_interact():
 			print("🔍 DEBUG: Can interact - performing interaction")
 			_perform_interaction()
 		else:
 			print("🔍 DEBUG: Cannot interact - no valid target")
 
 func _perform_interaction() -> void:
+	if not interaction_component:
+		print("❌ ERROR: No interaction component available")
+		return
+		
 	var target = interaction_component.get_interaction_target()
 	print("🔍 DEBUG: Attempting interaction with target: ", target)
 	
@@ -126,6 +142,12 @@ func _perform_interaction() -> void:
 		
 		# Show cyberpunk UI
 		print("🔍 DEBUG: cyberpunk_ui exists: ", cyberpunk_ui != null)
+		print("🔍 DEBUG: cyberpunk_ui reference: ", cyberpunk_ui)
+		print("🔍 DEBUG: cyberpunk_ui node path: ", get_node_or_null("CyberpunkUI"))
+		print("🔍 DEBUG: All children: ", get_children())
+		print("🔍 DEBUG: Looking for CyberpunkUI in children...")
+		for child in get_children():
+			print("🔍 DEBUG: Child: ", child.name, " (", child.get_class(), ")")
 		if cyberpunk_ui:
 			print("🔍 DEBUG: cyberpunk_ui has show_interaction_ui method: ", cyberpunk_ui.has_method("show_interaction_ui"))
 			if cyberpunk_ui.has_method("show_interaction_ui"):
@@ -171,15 +193,20 @@ func show_fallback_interaction_ui(target: Node) -> void:
 	popup.add_theme_color_override("font_color", Color(0, 255, 255))  # Cyan
 	popup.add_theme_font_size_override("font_size", 16)
 	
-	# Add to scene
-	get_tree().current_scene.add_child(popup)
-	popup.popup_centered()
-	
-	# Auto-close after 3 seconds
-	var timer = get_tree().create_timer(3.0)
-	await timer.timeout
-	if is_instance_valid(popup):
-		popup.queue_free()
+	# Add to scene safely
+	var current_scene = get_tree().current_scene
+	if current_scene:
+		current_scene.add_child(popup)
+		popup.popup_centered()
+		
+		# Auto-close after 3 seconds
+		var timer = get_tree().create_timer(3.0)
+		await timer.timeout
+		if is_instance_valid(popup):
+			popup.queue_free()
+	else:
+		# Fallback for test environment
+		print("❌ WARNING: No current scene available for popup")
 
 func _update_isometric_effects() -> void:
 	# Isometric: Update visual effects based on position

@@ -59,7 +59,7 @@
 18. **Test Tile Identification** (`test_tile_identification.gd`) - **59 lines** - NO TESTS NEEDED (debug script)
 19. **Scene Files** (`.tscn`) - No testing needed
 
-## �� Testing Strategy
+## 📝 Testing Strategy
 
 ### Unit Tests (Non-Interface Concrete Classes)
 
@@ -351,6 +351,19 @@
 - **Per-File Coverage**: 50% OR 100 lines (whichever is lower)
 
 ## 🛠️ Testing Tools and Patterns
+
+## Running Tests
+
+### Manual Test Execution
+
+```bash
+# Navigate to the Godot project directory
+cd cybercrawler_basicstealthaction
+
+# Run all tests with coverage
+& "C:\Program Files\Godot\Godot_v4.4.1-stable_win64_console.exe" --headless --script addons/gut/gut_cmdln.gd -gexit
+```
+
 
 ### Mock Organization (FIXED)
 ```gdscript

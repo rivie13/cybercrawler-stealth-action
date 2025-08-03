@@ -145,33 +145,43 @@ func show_interaction_ui(terminal_type: String):
 	ui_visible = true
 	target_alpha = 1.0
 	
-	# Update labels with cyberpunk text
-	interaction_label.text = "TERMINAL ACCESS"
-	status_label.text = "JACKING INTO " + terminal_type.to_upper()
+	# Ensure UI is set up
+	if not interaction_label or not status_label or not progress_bar:
+		setup_ui()
+	
+	# Update labels with cyberpunk text (with null checks)
+	if interaction_label:
+		interaction_label.text = "TERMINAL ACCESS"
+	if status_label:
+		status_label.text = "JACKING INTO " + terminal_type.to_upper()
 	
 	# Start progress animation
-	progress_bar.value = 0
-	progress_bar.max_value = 100
+	if progress_bar:
+		progress_bar.value = 0
+		progress_bar.max_value = 100
 	
 	# Position UI above the terminal
 	position_ui_above_terminal()
 	
 	# Start glitch effect
-	glitch_timer.start()
+	if glitch_timer:
+		glitch_timer.start()
 	
 	# Animate in
 	modulate.a = 0.0
 	show()
 	
 	# Animate progress bar
-	current_tween = create_tween()
-	current_tween.tween_property(progress_bar, "value", 100, 2.0)
-	current_tween.tween_callback(_on_hacking_complete)
+	if progress_bar:
+		current_tween = create_tween()
+		current_tween.tween_property(progress_bar, "value", 100, 2.0)
+		current_tween.tween_callback(_on_hacking_complete)
 
 func hide_ui():
 	ui_visible = false
 	target_alpha = 0.0
-	glitch_timer.stop()
+	if glitch_timer:
+		glitch_timer.stop()
 	
 	cleanup_tweens()
 	current_tween = create_tween()
@@ -182,31 +192,36 @@ func _on_glitch_timer_timeout():
 	if ui_visible and is_instance_valid(self):
 		# Add cyberpunk glitch effect
 		var glitch_offset = Vector2(randf_range(-3, 3), randf_range(-3, 3))
-		interaction_label.position += glitch_offset
-		status_label.position += glitch_offset
+		if interaction_label:
+			interaction_label.position += glitch_offset
+		if status_label:
+			status_label.position += glitch_offset
 		
 		# Add color glitch effect
 		var glitch_color = Color(randf_range(0, 1), randf_range(0, 1), randf_range(0, 1), 0.8)
-		interaction_label.add_theme_color_override("font_color", glitch_color)
-		status_label.add_theme_color_override("font_color", glitch_color)
+		if interaction_label:
+			interaction_label.add_theme_color_override("font_color", glitch_color)
+		if status_label:
+			status_label.add_theme_color_override("font_color", glitch_color)
 		
 		# Reset position and color after a short delay
 		var timer = get_tree().create_timer(0.03)
 		await timer.timeout
-		if is_instance_valid(self) and is_instance_valid(interaction_label) and is_instance_valid(status_label):
-			interaction_label.position -= glitch_offset
-			status_label.position -= glitch_offset
-			
-			# Reset colors
-			interaction_label.add_theme_color_override("font_color", Color(0, 255, 255))
-			status_label.add_theme_color_override("font_color", Color(255, 255, 0))
+		if is_instance_valid(self):
+			if interaction_label and is_instance_valid(interaction_label):
+				interaction_label.position -= glitch_offset
+				interaction_label.add_theme_color_override("font_color", Color(0, 255, 255))
+			if status_label and is_instance_valid(status_label):
+				status_label.position -= glitch_offset
+				status_label.add_theme_color_override("font_color", Color(255, 255, 0))
 
 func _on_hacking_complete():
 	if not is_instance_valid(self):
 		return
 		
-	status_label.text = "ACCESS GRANTED"
-	status_label.add_theme_color_override("font_color", Color(0, 255, 0))  # Green
+	if status_label:
+		status_label.text = "ACCESS GRANTED"
+		status_label.add_theme_color_override("font_color", Color(0, 255, 0))  # Green
 	
 	# Start cyberpunk glitch animation
 	start_cyberpunk_glitch_animation()
