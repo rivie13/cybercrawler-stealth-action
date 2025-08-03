@@ -284,7 +284,7 @@ func test_created_player_cleanup():
 	assert_true(true, "Should clean up properly")
 
 func test_created_player_interaction_cooldown():
-	# Test interaction search cooldown
+	# Test immediate interaction behavior (no cooldown)
 	created_player.initialize(di_container)
 	
 	# Set initial position
@@ -298,12 +298,12 @@ func test_created_player_interaction_cooldown():
 	# Should search once
 	assert_eq(mock_input_behavior.get_set_interaction_target_call_count(), 1, "Should search once")
 	
-	# Move again immediately (should be blocked by cooldown)
+	# Move again immediately (should search again since no cooldown)
 	created_player.global_position = Vector2(102, 102)  # Small movement to trigger search
 	created_player._handle_interactions(0.016)
 	
-	# Should still only search once due to cooldown
-	assert_eq(mock_input_behavior.get_set_interaction_target_call_count(), 1, "Should respect cooldown")
+	# Should search twice since there's no cooldown anymore
+	assert_eq(mock_input_behavior.get_set_interaction_target_call_count(), 2, "Should search immediately without cooldown")
 
 func test_created_player_interaction_target_management():
 	# Test interaction target management

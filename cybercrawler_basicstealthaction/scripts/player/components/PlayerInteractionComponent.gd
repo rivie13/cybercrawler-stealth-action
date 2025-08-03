@@ -1,11 +1,11 @@
 class_name PlayerInteractionComponent
 extends RefCounted
 
-var interaction_range: float = 16.0  # reduced to 1 tile - must be closer to terminal
+var interaction_range: float = 16.0  # reduced to 1 tile - must be closer to terminal DO NOT CHANGE THIS VALUE
 var current_target: Node = null
 var tilemap: Object = null
 var last_search_time: float = 0.0
-var search_cooldown: float = 0.5  # Only log every 0.5 seconds
+var search_cooldown: float = 0.1  # Reduced to 0.1 seconds for more responsive updates
 var _engine_system: Object = Engine  # Default to global Engine, but can be injected for testing
 var _time_system: Object = Time  # Default to global Time, but can be injected for testing
 

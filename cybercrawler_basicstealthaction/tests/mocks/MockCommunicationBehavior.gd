@@ -25,6 +25,14 @@ func get_alert_calls() -> Array:
 func get_mission_context_calls() -> int:
 	return mission_context_calls
 
+func get_handle_terminal_interaction_calls() -> int:
+	return interaction_calls.size()
+
+func get_last_handle_terminal_interaction_args() -> Dictionary:
+	if interaction_calls.size() > 0:
+		return interaction_calls[-1]
+	return {}
+
 func reset():
 	interaction_calls.clear()
 	alert_calls.clear()

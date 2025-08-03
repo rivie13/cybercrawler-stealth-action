@@ -15,15 +15,15 @@ var interaction_component: PlayerInteractionComponent
 @onready var player_details: Node2D = $Visuals/PlayerDetails
 @onready var interaction_indicator: ColorRect = $Visuals/InteractionIndicator
 @onready var shadow: ColorRect = $Visuals/Shadow
-@onready var cyberpunk_ui: Control = $CyberpunkUI
+# Remove @onready for cyberpunk_ui to avoid null reference issues
+var cyberpunk_ui: Control
 
 # Isometric movement system
 var isometric_offset: Vector2 = Vector2(8, 4)  # Half tile size for isometric positioning (16x8 tiles)
 
 # Interaction optimization
 var last_player_position: Vector2 = Vector2.ZERO
-var interaction_search_cooldown: float = 0.1  # Only search every 0.1 seconds
-var last_interaction_search_time: float = 0.0
+# Removed cooldown system for immediate range checking
 
 func initialize(container: DIContainer) -> void:
 	# Dependency injection
@@ -51,12 +51,8 @@ func _ready() -> void:
 	# Initialize last position
 	last_player_position = global_position
 	
-	# Debug: Check if cyberpunk_ui is properly initialized
-	print("🔍 DEBUG: _ready() called")
-	print("🔍 DEBUG: cyberpunk_ui exists: ", cyberpunk_ui != null)
-	print("🔍 DEBUG: cyberpunk_ui reference: ", cyberpunk_ui)
-	print("🔍 DEBUG: get_node_or_null('CyberpunkUI'): ", get_node_or_null("CyberpunkUI"))
-	print("🔍 DEBUG: All children: ", get_children())
+	# Initialize cyberpunk_ui properly
+	cyberpunk_ui = get_node_or_null("CyberpunkUI")
 
 func _physics_process(delta: float) -> void:
 	if not input_behavior:
@@ -105,33 +101,34 @@ func _handle_interactions(_delta: float) -> void:
 		should_search = true
 		last_player_position = global_position
 	
-	# Search for terminals when player moves (with cooldown) or if we don't have a valid target
-	var current_time = Time.get_time_dict_from_system().get("second", 0) + Time.get_time_dict_from_system().get("msec", 0) / 1000.0
-	var time_since_last_search = current_time - last_interaction_search_time
-	var should_search_due_to_movement = should_search and time_since_last_search > interaction_search_cooldown
-	var should_search_due_to_no_target = not interaction_component.can_interact() and time_since_last_search > interaction_search_cooldown
-	
-	if should_search_due_to_movement or should_search_due_to_no_target:
+	# IMMEDIATE search - no cooldown for range checking
+	if should_search or not interaction_component.can_interact():
 		# Find nearby terminals using 2D position
 		var target = interaction_component.find_interaction_target(global_position)
 		input_behavior.set_interaction_target(target)
-		last_interaction_search_time = current_time
 	
-	# Handle interaction input AFTER updating target
+	# Handle interaction input - IMMEDIATE range check
 	if Input.is_action_just_pressed("interact"):
-		print("🔍 DEBUG: Interact button pressed!")
-		if interaction_component and interaction_component.can_interact():
-			print("🔍 DEBUG: Can interact - performing interaction")
+		# CRITICAL: Check distance every time, not just rely on cached target
+		if interaction_component and _can_interact_with_current_target():
 			_perform_interaction()
-		else:
-			print("🔍 DEBUG: Cannot interact - no valid target")
 	elif Input.is_action_just_pressed("ui_accept"):
-		print("🔍 DEBUG: Enter/space pressed - trying as alternative interact")
-		if interaction_component and interaction_component.can_interact():
-			print("🔍 DEBUG: Can interact - performing interaction")
+		# CRITICAL: Check distance every time, not just rely on cached target
+		if interaction_component and _can_interact_with_current_target():
 			_perform_interaction()
-		else:
-			print("🔍 DEBUG: Cannot interact - no valid target")
+
+func _can_interact_with_current_target() -> bool:
+	# Check if we have a target AND it's within range
+	var target = interaction_component.get_interaction_target()
+	if not target:
+		return false
+	
+	# Check distance to target
+	var distance = global_position.distance_to(target.global_position)
+	var max_range = interaction_component.interaction_range
+	
+	# Only allow interaction if within range
+	return distance <= max_range
 
 func _perform_interaction() -> void:
 	if not interaction_component:
@@ -146,26 +143,10 @@ func _perform_interaction() -> void:
 		print("🎯 SUCCESSFUL INTERACTION: Player interacted with terminal '%s'" % target.name)
 		
 		# Show cyberpunk UI
-		print("🔍 DEBUG: cyberpunk_ui exists: ", cyberpunk_ui != null)
-		print("🔍 DEBUG: cyberpunk_ui reference: ", cyberpunk_ui)
-		print("🔍 DEBUG: cyberpunk_ui node path: ", get_node_or_null("CyberpunkUI"))
-		print("🔍 DEBUG: All children: ", get_children())
-		print("🔍 DEBUG: Looking for CyberpunkUI in children...")
-		for child in get_children():
-			print("🔍 DEBUG: Child: ", child.name, " (", child.get_class(), ")")
 		if cyberpunk_ui:
-			print("🔍 DEBUG: cyberpunk_ui has show_interaction_ui method: ", cyberpunk_ui.has_method("show_interaction_ui"))
 			if cyberpunk_ui.has_method("show_interaction_ui"):
 				var terminal_type = target.terminal_type if target.has_method("get_terminal_type") else "unknown"
-				print("🔍 DEBUG: Calling show_interaction_ui with type: ", terminal_type)
 				cyberpunk_ui.show_interaction_ui(terminal_type)
-			else:
-				print("❌ ERROR: cyberpunk_ui doesn't have show_interaction_ui method")
-		else:
-			print("❌ ERROR: cyberpunk_ui is null")
-		
-		# DISABLED: Show simple interaction message - using cyberpunk UI instead
-		# show_fallback_interaction_ui(target)
 		
 		# Notify external systems through DI
 		if communication_behavior:

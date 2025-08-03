@@ -57,3 +57,6 @@ func is_stealth_action_active() -> bool:
 
 func set_interaction_target(target: Node) -> void:
 	_interaction_target = target
+
+func set_stealth_active(active: bool) -> void:
+	_stealth_action_active = active
