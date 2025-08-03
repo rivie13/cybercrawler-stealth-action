@@ -37,6 +37,10 @@ func spawn_terminals():
 		if atlas_coords in terminal_atlas_coords:
 			# Get terminal type from atlas coordinates
 			var terminal_type = TerminalTileIdentifier.get_terminal_type_from_atlas(atlas_coords)
+			var terminal_description = TerminalTileIdentifier.get_terminal_description(terminal_type)
+			var terminal_icon = TerminalTileIdentifier.get_terminal_icon(terminal_type)
+			
+			print("🎯 Found terminal tile at ", cell_pos, " - Type: ", terminal_type, " ", terminal_icon, " - ", terminal_description)
 			
 			# Instead of creating new objects, we'll add interaction behavior to the existing tiles
 			# Create a StaticBody2D as a child of the tilemap for this position
@@ -58,12 +62,18 @@ func spawn_terminals():
 			terminal_body.set_script(terminal_script)
 			terminal_body.terminal_type = terminal_type
 			terminal_body.terminal_name = terminal_body.name
+			terminal_body.terminal_id = "terminal_" + str(cell_pos.x) + "_" + str(cell_pos.y)
 			
 			# Set up DI behavior
 			if di_container:
 				var terminal_behavior = di_container.get_implementation("ITerminalBehavior")
 				if terminal_behavior:
 					terminal_body.set_terminal_behavior(terminal_behavior)
+				
+				# Set up terminal communication
+				var terminal_communication = di_container.get_implementation("ITerminalCommunication")
+				if terminal_communication:
+					terminal_body.set_terminal_communication(terminal_communication)
 			
 			# Add to tilemap as child
 			tilemap.add_child(terminal_body)
@@ -71,6 +81,11 @@ func spawn_terminals():
 			# Add to terminals group for interaction detection
 			terminal_body.add_to_group("terminals")
 			
-			print("🎯 Added terminal behavior to tile at ", cell_pos, " type: ", terminal_type)
+			print("✅ Terminal spawned successfully: ", terminal_type, " at ", cell_pos)
 		else:
-			print("❌ Tile at ", cell_pos, " is not a terminal (atlas_coords: ", atlas_coords, ")") 
+			print("❌ Tile at ", cell_pos, " is not a terminal (atlas_coords: ", atlas_coords, ")")
+
+# Debug function to print all terminal types
+func debug_print_terminal_types():
+	print("🔍 Available terminal types:")
+	TerminalTileIdentifier.debug_print_terminals() 
