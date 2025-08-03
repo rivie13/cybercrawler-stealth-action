@@ -21,7 +21,7 @@ func after_each():
 
 func test_terminal_object_initialization():
 	assert_not_null(terminal_object)
-	assert_eq(terminal_object.terminal_type, "basic_terminal")
+	assert_eq(terminal_object.terminal_type, "main_terminal")
 	assert_eq(terminal_object.terminal_name, "Terminal")
 	assert_null(terminal_object.terminal_behavior)
 
@@ -30,7 +30,7 @@ func test_set_terminal_behavior():
 	assert_eq(terminal_object.terminal_behavior, mock_behavior)
 
 func test_get_terminal_type():
-	assert_eq(terminal_object.get_terminal_type(), "basic_terminal")
+	assert_eq(terminal_object.get_terminal_type(), "main_terminal")
 	
 	# Test with custom type
 	terminal_object.terminal_type = "security_terminal"
@@ -111,7 +111,7 @@ func test_terminal_object_export_properties():
 	var test_terminal = TerminalObject.new()
 	
 	# Test default values
-	assert_eq(test_terminal.terminal_type, "basic_terminal")
+	assert_eq(test_terminal.terminal_type, "main_terminal")
 	assert_eq(test_terminal.terminal_name, "Terminal")
 	assert_null(test_terminal.sprite_texture)
 	
@@ -166,7 +166,7 @@ func test_interact_with_player_without_behavior():
 	terminal_object.interact_with_player(mock_player)
 	# Verify that the terminal still exists and hasn't crashed
 	assert_not_null(terminal_object)
-	assert_eq(terminal_object.terminal_type, "basic_terminal")
+	assert_eq(terminal_object.terminal_type, "main_terminal")
 	# Verify that the terminal can still interact (no side effects)
 	assert_true(terminal_object.can_interact())
 

@@ -99,8 +99,11 @@ func get_terminal_icon() -> String:
 	return TerminalTileIdentifier.get_terminal_icon(terminal_type)
 
 func can_interact() -> bool:
+	# Check if terminal has behavior and behavior allows interaction
 	if terminal_behavior:
-		return terminal_behavior.can_interact(self)
+		return terminal_behavior.can_interact(null)  # Pass null as player for now
+	
+	# Default to true if no behavior is set
 	return true
 
 # DI Integration

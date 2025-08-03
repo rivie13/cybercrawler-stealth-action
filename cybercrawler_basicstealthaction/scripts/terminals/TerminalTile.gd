@@ -3,9 +3,14 @@ extends StaticBody2D
 
 var terminal_type: String = "basic_terminal"
 var terminal_name: String = "Terminal"
+var terminal_id: String = ""
 var terminal_behavior: ITerminalBehavior
 
 func _ready():
+	# Generate unique terminal ID if not set
+	if terminal_id.is_empty():
+		terminal_id = "terminal_tile_" + str(get_instance_id())
+	
 	# Set up collision layer/mask for interaction
 	collision_layer = 2  # Layer for terminals
 	collision_mask = 1    # Mask for player

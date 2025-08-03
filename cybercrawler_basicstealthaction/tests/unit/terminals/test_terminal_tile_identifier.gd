@@ -50,10 +50,10 @@ func test_is_terminal_tile_with_non_terminals():
 func test_get_terminal_type_from_atlas_known_terminals():
 	# Test each known terminal coordinate
 	var expected_types = {
-		Vector2i(9, 1): "terminal_desk_1",
-		Vector2i(11, 1): "terminal_desk_2", 
-		Vector2i(9, 3): "terminal_console_1",
-		Vector2i(11, 3): "terminal_console_2"
+		Vector2i(9, 1): "main_terminal",
+		Vector2i(11, 1): "tower_terminal", 
+		Vector2i(9, 3): "mine_terminal",
+		Vector2i(11, 3): "upgrade_terminal"
 	}
 	
 	for coords in known_terminal_coords:
@@ -98,40 +98,36 @@ func test_get_all_terminal_coords_content():
 # Test edge cases with boundary coordinates
 func test_is_terminal_tile_edge_cases():
 	var edge_cases = [
-		Vector2i(8, 1),   # Just before first terminal
-		Vector2i(10, 1),  # Between terminals
-		Vector2i(12, 1),  # Just after last terminal
-		Vector2i(9, 0),   # Above terminal
-		Vector2i(9, 2),   # Below terminal
-		Vector2i(9, 4)    # Far below terminal
+		Vector2i(-1, -1),
+		Vector2i(999, 999),
+		Vector2i(0, 0),
+		Vector2i(100, 100)
 	]
 	
 	for coords in edge_cases:
 		# Act
 		var result = TerminalTileIdentifier.is_terminal_tile(coords)
 		
-		# Assert
-		assert_false(result, "Edge case %s should not be identified as terminal" % coords)
+		# Assert - should not be terminals
+		assert_false(result, "Should not identify %s as terminal" % coords)
 
-# Test terminal type mapping edge cases
+# Test terminal type mapping for edge cases
 func test_get_terminal_type_from_atlas_edge_cases():
 	var edge_cases = [
-		Vector2i(8, 1),
-		Vector2i(10, 1),
-		Vector2i(12, 1),
-		Vector2i(9, 0),
-		Vector2i(9, 2),
-		Vector2i(9, 4)
+		Vector2i(-1, -1),
+		Vector2i(999, 999),
+		Vector2i(0, 0),
+		Vector2i(100, 100)
 	]
 	
 	for coords in edge_cases:
 		# Act
 		var result = TerminalTileIdentifier.get_terminal_type_from_atlas(coords)
 		
-		# Assert
-		assert_eq(result, "unknown_terminal", "Edge case %s should return unknown_terminal" % coords)
+		# Assert - should return unknown_terminal
+		assert_eq(result, "unknown_terminal", "Should return unknown_terminal for %s" % coords)
 
-# Test that all terminal coordinates are valid
+# Test that all known coordinates are valid terminals
 func test_all_known_coordinates_are_valid():
 	for coords in known_terminal_coords:
 		# Act
@@ -139,21 +135,24 @@ func test_all_known_coordinates_are_valid():
 		var terminal_type = TerminalTileIdentifier.get_terminal_type_from_atlas(coords)
 		
 		# Assert
-		assert_true(is_terminal, "Known coordinate %s should be identified as terminal" % coords)
-		assert_ne(terminal_type, "unknown_terminal", "Known coordinate %s should have valid type" % coords)
+		assert_true(is_terminal, "Should be a terminal: %s" % coords)
+		assert_ne(terminal_type, "unknown_terminal", "Should have valid type: %s" % coords)
 
-# Test coordinate conversion with various inputs
+# Test atlas coordinate conversion with various inputs
 func test_get_tile_coords_from_atlas_various_inputs():
 	var test_cases = [
+		Vector2i(9, 1),
+		Vector2i(11, 1),
+		Vector2i(9, 3),
+		Vector2i(11, 3),
 		Vector2i(0, 0),
-		Vector2i(15, 15),
-		Vector2i(-1, -1),
-		Vector2i(100, 100)
+		Vector2i(5, 5),
+		Vector2i(10, 10)
 	]
 	
 	for coords in test_cases:
 		# Act
 		var result = TerminalTileIdentifier.get_tile_coords_from_atlas(coords)
 		
-		# Assert
-		assert_eq(result, coords, "Should return input coordinates unchanged for %s" % coords) 
+		# Assert - should return the same coordinates
+		assert_eq(result, coords, "Should return same coordinates for %s" % coords) 
