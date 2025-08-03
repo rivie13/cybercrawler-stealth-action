@@ -292,14 +292,14 @@ func test_created_player_interaction_cooldown():
 	created_player.last_player_position = Vector2(100, 100)
 	
 	# Move player and trigger search
-	created_player.global_position = Vector2(150, 150)
+	created_player.global_position = Vector2(101, 101)  # Small movement to trigger search
 	created_player._handle_interactions(0.016)
 	
 	# Should search once
 	assert_eq(mock_input_behavior.get_set_interaction_target_call_count(), 1, "Should search once")
 	
 	# Move again immediately (should be blocked by cooldown)
-	created_player.global_position = Vector2(200, 200)
+	created_player.global_position = Vector2(102, 102)  # Small movement to trigger search
 	created_player._handle_interactions(0.016)
 	
 	# Should still only search once due to cooldown

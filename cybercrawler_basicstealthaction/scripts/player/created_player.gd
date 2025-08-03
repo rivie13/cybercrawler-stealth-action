@@ -99,18 +99,23 @@ func _handle_interactions(_delta: float) -> void:
 	if not input_behavior or not interaction_component:
 		return
 		
-	# Check if player moved significantly - ALWAYS search when player moves
+	# Check if player moved significantly
 	var should_search = false
 	if global_position.distance_to(last_player_position) > 1.0:
 		should_search = true
 		last_player_position = global_position
 	
-	# Search for terminals when player moves or if we don't have a valid target
-	if should_search or not interaction_component.can_interact():
+	# Search for terminals when player moves (with cooldown) or if we don't have a valid target
+	var current_time = Time.get_time_dict_from_system().get("second", 0) + Time.get_time_dict_from_system().get("msec", 0) / 1000.0
+	var time_since_last_search = current_time - last_interaction_search_time
+	var should_search_due_to_movement = should_search and time_since_last_search > interaction_search_cooldown
+	var should_search_due_to_no_target = not interaction_component.can_interact() and time_since_last_search > interaction_search_cooldown
+	
+	if should_search_due_to_movement or should_search_due_to_no_target:
 		# Find nearby terminals using 2D position
 		var target = interaction_component.find_interaction_target(global_position)
 		input_behavior.set_interaction_target(target)
-		last_interaction_search_time = Time.get_time_dict_from_system().get("second", 0)
+		last_interaction_search_time = current_time
 	
 	# Handle interaction input AFTER updating target
 	if Input.is_action_just_pressed("interact"):
