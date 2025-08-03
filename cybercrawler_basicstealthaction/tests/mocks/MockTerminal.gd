@@ -5,6 +5,7 @@ var mock_terminal_type: String = "mock_terminal"
 var mock_terminal_name: String = "MockTerminal"
 var mock_terminal_behavior: ITerminalBehavior = null
 var mock_can_interact: bool = true
+var terminal_type: String = "mock_terminal"  # Add this property for compatibility
 
 func get_terminal_type() -> String:
 	return mock_terminal_type

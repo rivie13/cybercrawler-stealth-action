@@ -146,4 +146,13 @@ func get_terminal_type() -> String:
 	return mock_terminal_type
 
 func set_terminal_type(type: String):
-	mock_terminal_type = type 
+	mock_terminal_type = type
+
+# Mock interaction target for UI testing
+var mock_interaction_target: Node = null
+
+func get_interaction_target() -> Node:
+	return mock_interaction_target
+
+func set_interaction_target(target: Node):
+	mock_interaction_target = target 

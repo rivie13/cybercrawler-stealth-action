@@ -1,5 +1,5 @@
 class_name MockPlayerInputBehavior
-extends RefCounted
+extends IPlayerInputBehavior
 
 # Mock input state
 var mock_current_input: Vector2 = Vector2.ZERO

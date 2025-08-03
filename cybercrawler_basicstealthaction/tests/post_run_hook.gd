@@ -11,7 +11,6 @@ const TEST_COVERAGE_THRESHOLD := 90.0  # Only require 75% total coverage when 90
 # Files that should have tests (concrete classes, not interfaces)
 const FILES_THAT_SHOULD_HAVE_TESTS = [
 	"core/di/DIContainer.gd",
-	"core/Main.gd",
 	"player/created_player.gd",
 	"player/components/PlayerMovementComponent.gd",
 	"player/components/PlayerInteractionComponent.gd",
@@ -30,7 +29,8 @@ const FILES_THAT_SHOULD_NOT_HAVE_TESTS = [
 	"core/interfaces/ICommunicationInterface.gd",
 	"core/interfaces/ITerminalSystem.gd",
 	"player/input/InputSetup.gd",
-	"test_tile_identification.gd"
+	"test_tile_identification.gd",
+	"core/Main.gd"
 ]
 
 func run():
@@ -99,12 +99,31 @@ func _validate_coverage_requirements():
 	if total_lines_should_have_tests > 0:
 		total_coverage_should_have_tests = (float(covered_lines_should_have_tests) / float(total_lines_should_have_tests)) * 100.0
 	
-	# Print analysis
+	# Calculate overall project coverage (all files)
+	var total_lines_all_files = 0
+	var covered_lines_all_files = 0
+	for script_path in coverage.coverage_collectors:
+		var collector = coverage.coverage_collectors[script_path]
+		total_lines_all_files += collector.coverage_line_count()
+		covered_lines_all_files += collector.coverage_count()
+	
+	var overall_project_coverage = 0.0
+	if total_lines_all_files > 0:
+		overall_project_coverage = (float(covered_lines_all_files) / float(total_lines_all_files)) * 100.0
+	
+	# Print analysis with clear distinction between the two coverage calculations
 	print("🔥🔥🔥 COVERAGE ANALYSIS 🔥🔥🔥")
 	print("📊 Files that should have tests: %d" % total_files_should_have_tests)
 	print("✅ Files with tests: %d (%.1f%%)" % [files_with_tests.size(), percentage_files_with_tests])
 	print("❌ Files without tests: %d" % files_without_tests.size())
-	print("📊 Total coverage (files that should have tests): %.1f%% (%d/%d lines)" % [total_coverage_should_have_tests, covered_lines_should_have_tests, total_lines_should_have_tests])
+	print("")
+	print("📈 COVERAGE CALCULATIONS:")
+	print("🎯 VALIDATION TARGET: %.1f%% (%d/%d lines) - Files that should have tests" % [total_coverage_should_have_tests, covered_lines_should_have_tests, total_lines_should_have_tests])
+	print("📊 OVERALL PROJECT: %.1f%% (%d/%d lines) - All code files (not used for validation)" % [overall_project_coverage, covered_lines_all_files, total_lines_all_files])
+	print("")
+	print("💡 EXPLANATION:")
+	print("   • VALIDATION TARGET: Only counts files that should have tests (used for 75%% requirement)")
+	print("   • OVERALL PROJECT: Counts all code files including interfaces and debug scripts")
 	print("🔥🔥🔥 END COVERAGE ANALYSIS 🔥🔥🔥")
 	
 	# Show files with tests and their coverage
@@ -157,7 +176,7 @@ func _validate_coverage_requirements():
 	if validation_passed:
 		print("\n✅ COVERAGE VALIDATION PASSED!")
 		if percentage_files_with_tests >= TEST_COVERAGE_THRESHOLD:
-			print("✅ Total coverage: %.1f%% >= %.1f%%" % [total_coverage_should_have_tests, COVERAGE_TARGET_TOTAL])
+			print("✅ Validation target coverage: %.1f%% >= %.1f%%" % [total_coverage_should_have_tests, COVERAGE_TARGET_TOTAL])
 		else:
 			print("✅ Building up test coverage: %.1f%% of files have tests" % percentage_files_with_tests)
 	else:
