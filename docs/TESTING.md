@@ -8,7 +8,7 @@ This project uses **GUT (Godot Unit Test)** framework with **code coverage** ana
 
 - **GUT 9.4.0**: Unit testing framework for Godot
 - **Code Coverage**: Line-by-line coverage analysis using [godot-code-coverage](https://github.com/jamie-pate/godot-code-coverage)
-- **Coverage Targets**: Currently set to 10% minimum (lenient for initial setup)
+- **Coverage Targets**: Strict requirements enforced by post-run hook
 
 ## Test Structure
 
@@ -59,20 +59,41 @@ The test runner will show:
 The system provides detailed coverage information:
 
 ```
-🔥🔥🔥 COVERAGE SUMMARY 🔥🔥🔥
-📊 TOTAL COVERAGE (ALL CODE): 88.2% (15/17 lines)
-🔥🔥🔥 END COVERAGE SUMMARY 🔥🔥🔥
+🔥🔥🔥 COVERAGE ANALYSIS 🔥🔥🔥
+📊 Files that should have tests: 12
+✅ Files with tests: 8 (66.7%)
+❌ Files without tests: 4
+📊 Total coverage (files that should have tests): 45.2% (234/518 lines)
+🔥🔥🔥 END COVERAGE ANALYSIS 🔥🔥🔥
 
---- All Files Coverage Breakdown ---
-📊 Files with Coverage (1 files):
-  ✅ 88.2% sample_script.gd (15/17 lines)
+--- Files with Tests and Coverage ---
+✅ 85.2% DIContainer.gd (17/20 lines) - Required: 50.0%
+✅ 72.1% Main.gd (62/86 lines) - Required: 50.0%
+❌ 35.4% created_player.gd (98/277 lines) - Required: 50.0%
+
+--- Files Missing Tests ---
+❌ PlayerMovementComponent.gd (23 lines) - NEEDS TEST
+❌ PlayerInteractionComponent.gd (56 lines) - NEEDS TEST
+❌ KeyboardPlayerInput.gd (54 lines) - NEEDS TEST
+❌ TerminalTileIdentifier.gd (47 lines) - NEEDS TEST
 ```
 
 ### Coverage Requirements
 
-**Current Settings** (lenient for initial setup):
-- **Minimum Coverage**: 10% total coverage required
-- **Future Targets**: 75% total, 50% per-file when mature
+**Strict Requirements** (enforced by post-run hook):
+- **Per-File Coverage**: 50% OR 100 lines covered (whichever is lower)
+- **Total Coverage**: 75% minimum when 90% of files have tests
+- **Test Coverage**: 90% of files that should have tests must have tests
+
+**Files That Should Have Tests**:
+- Concrete classes (non-interface implementations)
+- Core systems (DIContainer, Main, Player components, Terminal systems, UI systems)
+
+**Files That Should NOT Have Tests**:
+- Interface contracts (IPlayerInputBehavior, ICommunicationBehavior, ITerminalBehavior)
+- Documentation files (InputSetup.gd)
+- Debug scripts (test_tile_identification.gd)
+- Scene files (.tscn)
 
 ## Writing Tests
 
@@ -143,7 +164,7 @@ func test_function_coverage():
 - Extends `GutHookScript` 
 - Validates coverage requirements
 - Generates coverage reports
-- Fails tests if coverage is too low
+- **Fails tests if requirements not met**
 
 ## Best Practices
 
@@ -158,6 +179,7 @@ func test_function_coverage():
 1. **Test different code paths**: if/else branches, loops, error conditions
 2. **Test edge cases**: null values, empty arrays, boundary conditions
 3. **Focus on critical code**: business logic, algorithms, data processing
+4. **Aim for 50% coverage**: OR 100 lines per file (whichever is lower)
 
 ### Common Assertions
 
@@ -190,10 +212,11 @@ assert_typeof(value, TYPE_STRING, "Message")
 - Check that test files start with `test_` prefix
 - Make sure test classes extend `GutTest`
 
-**Low coverage warnings**:
+**Coverage requirements not met**:
 - Add more test cases covering different code paths
 - Test error conditions and edge cases
 - Check for unreachable or dead code
+- Ensure 90% of files that should have tests actually have tests
 
 ### Debug Information
 
@@ -202,12 +225,18 @@ The pre-run hook shows detailed debug information:
 - List of excluded files
 - Coverage setup confirmation
 
+The post-run hook shows:
+- Files that should have tests vs. files with tests
+- Individual file coverage percentages
+- Missing test files
+- Validation results
+
 ## Integration
 
 ### GitHub Actions / CI
 
 The coverage system is designed to work with CI/CD:
-- **Exit code 0**: All tests pass, coverage acceptable
+- **Exit code 0**: All tests pass, coverage requirements met
 - **Exit code 1**: Test failures or insufficient coverage
 - **Detailed output**: Coverage reports in console
 
