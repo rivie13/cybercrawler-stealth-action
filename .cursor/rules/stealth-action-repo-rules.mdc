@@ -1,0 +1,41 @@
+---
+alwaysApply: true
+---
+/**
+ * CyberCrawler Stealth Action Repo Rule
+ * 
+ * This rule defines the intended scope, coding standards, and boundaries for the CyberCrawler Stealth Action repository.
+ * 
+ * WHAT THIS REPO IS FOR:
+ * - 2.5D stealth action gameplay in corporate environments.
+ * - Multi-terminal interaction system for network access and in-world hacking.
+ * - Player character movement, stealth, and interaction mechanics.
+ * - Guard, camera, and security system AI (patrol, detection, alert).
+ * - Alert system integration: triggers and responses for alert system strictly in the stealth action part of the game.
+ * - Environmental storytelling and level design for the dystopian world.
+ * - Terminal-based network infiltration mechanics (player uses terminals to affect cyberspace).
+ * - All code, assets, and tests directly related to the above.
+ * 
+ * WHAT THIS REPO IS NOT FOR:
+ * - Tower defense gameplay logic, AI, or UI (these belong in the tower defense repo).
+ * - Hub/safehouse systems, mission selection, or meta-progression.
+ * - Final art assets (use placeholders; final art is handled elsewhere).
+ * - Story dialogue systems or narrative scripting.
+ * - Shared utilities not specific to stealth action (should go in a common/shared repo).
+ * 
+ * CODING GUIDELINES:
+ * - All code must be modular and interface-driven, we are using a DI type setup for all the repos. Use Godot's node/component system to keep systems decoupled.
+ * - Each gameplay system (player, terminals, guards, alert manager, etc.) should be in its own script/class.
+ * - No monolithic "god" classes. If a class is doing too much, refactor into smaller, focused components.
+ * - Only include code that directly supports stealth action, terminal interaction, or alert system integration.
+ * - Integration with tower defense must be via well-defined interfaces or signals, not direct dependencies.
+ * - Placeholder art and assets are acceptable; focus on functionality and testability.
+ * - All new features must be accompanied by automated tests (GUT framework).
+ * - Follow the branching and PR workflow as described in the README.
+ * - Update documentation for any new features or changes to repo scope.
+ * 
+ * IF IN DOUBT:
+ * - If a feature or file does not directly support stealth gameplay, terminal interaction, or alert system integration, it does NOT belong in this repo.
+ * - When integrating with other CyberCrawler systems, use signals, events, or API boundaries—never direct code imports from other repos.
+ * - Always check the README for the latest scope and workflow.
+ */
