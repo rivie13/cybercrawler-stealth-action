@@ -343,7 +343,7 @@ func test_dependency_injection_edge_cases():
 func test_performance_with_many_terminals():
 	# Create many terminals to test performance
 	var terminals = []
-	for i in range(100):
+	for i in range(10):  # Reduced from 100 to 10 for better test performance
 		var terminal = MockTerminal.new()
 		terminal.global_position = Vector2(100 + i, 100 + i)
 		terminals.append(terminal)

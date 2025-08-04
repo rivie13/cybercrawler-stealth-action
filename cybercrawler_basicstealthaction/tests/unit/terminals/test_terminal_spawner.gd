@@ -322,7 +322,7 @@ func test_terminal_spawner_performance():
 			terminal_count += 1
 	
 	# Should have created terminals for every third tile
-	var expected_terminals = 34  # 100/3 rounded up
+	var expected_terminals = int(ceil(100.0 / 3.0))  # 100/3 rounded up
 	assert_eq(terminal_count, expected_terminals, "Should create correct number of terminals")
 
 func test_terminal_spawner_component_inheritance():
